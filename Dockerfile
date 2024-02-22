@@ -1,7 +1,7 @@
 FROM ubuntu:20.04
 
 # default screen size
-ENV XRES=1280x800x24
+ENV XRES=1280x800x16
 
 # default tzdata
 ENV TZ=Etc/UTC
@@ -11,9 +11,11 @@ RUN export DEBIAN_FRONTEND=noninteractive  \
 	&& apt-get update -q \
 	&& apt-get upgrade -qy \
 	&& apt-get install -qy  --no-install-recommends \
-	apt-utils sudo supervisor vim openssh-server \
+	apt-utils sudo supervisor vim \
 	xserver-xorg xvfb x11vnc dbus-x11 \
 	xfce4 xfce4-terminal xfce4-xkb-plugin  \
+	# install midori
+	midori \
 	\
 	# fix "LC_ALL: cannot change locale (en_US.UTF-8)""
 	locales \
@@ -51,6 +53,10 @@ ADD config/xfce4/terminal/terminalrc /home/ubuntu/.config/xfce4/terminal/termina
 ADD config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml /home/ubuntu/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
 # icon theme
 ADD config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml /home/ubuntu/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
+#b0 wallpaper
+ADD config/xfce4/backgrounds/xfce-blue-b0.jpg /usr/share/backgrounds/xfce/xfce-blue-b0.jpg
+# midori config
+ADD config/midori/config /home/ubuntu/.config/midori/config
 
 # TZ, aliases
 RUN cd /home/ubuntu \
@@ -68,7 +74,7 @@ RUN cd /home/ubuntu \
 RUN chown -R ubuntu:ubuntu /home/ubuntu/.*
 
 # ports
-EXPOSE 22 5900
+#EXPOSE 22 5900
 
 # # default command
 CMD ["/usr/bin/supervisord","-c","/etc/supervisord.conf"]
